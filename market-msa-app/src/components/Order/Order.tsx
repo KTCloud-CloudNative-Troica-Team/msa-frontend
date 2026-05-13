@@ -11,10 +11,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Button,
 } from '@mui/material';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import type { Order } from "@typedef/OrderType";
+import { Link } from '@tanstack/react-router';
+import { AddCircleOutlineOutlined } from '@mui/icons-material';
+import { ROUTE_PATHS } from '@libs/route-config';
 
 type Props = {
   orders: Order[];
@@ -32,13 +36,31 @@ const OrderList = ({ orders }: Props) => {
 
   return (
     <Box sx={{ p: 3, bgcolor: '#f8fafc', minHeight: '100vh' }}>
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 4 }}>
+      <Stack direction="row" spacing={2} sx={{ mb: 4, alignItems: 'center', justifyContent: 'end' }}>
         <Box sx={{ p: 1, bgcolor: '#102a43', borderRadius: 2 }}>
           <ReceiptLongOutlinedIcon sx={{ color: '#38bdf8' }} />
         </Box>
         <Typography variant="h5" fontWeight={800} color="#102a43">
           주문 및 구독 내역
         </Typography>
+        <Box component={Link} to={ROUTE_PATHS.orderCreate}>
+          <Button
+            variant="contained"
+            startIcon={<AddCircleOutlineOutlined />}
+
+            sx={{
+              bgcolor: '#0ea5e9',
+              '&:hover': { bgcolor: '#0284c7' },
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+              fontWeight: 700,
+              boxShadow: '0 4px 12px rgba(14, 165, 233, 0.25)'
+            }}
+          >
+            새 주문 생성
+          </Button>
+        </Box>
       </Stack>
 
       <Stack spacing={4}>

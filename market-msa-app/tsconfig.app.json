@@ -22,9 +22,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@assets/*": [
-        "./src/assets/*"
-      ],
       "@components/*": [
         "./src/components/*"
       ],

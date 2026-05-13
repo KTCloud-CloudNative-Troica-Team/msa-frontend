@@ -20,6 +20,8 @@ api.interceptors.request.use(
     if (token && config.headers)
       config.headers.Authorization = `Bearer ${token.accessToken}`;
 
+    config.headers["Content-Type"] = 'application/json'
+
     console.log(config)
 
     return config;

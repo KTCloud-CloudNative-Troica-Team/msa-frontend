@@ -5,7 +5,7 @@ import { useMemo } from "react"
 const InventoryContainer = () => {
   const { data } = InventoryService.useFetchAllInventories()
 
-  const inventories = useMemo(() => data ? data.inventories : [], [])
+  const inventories = useMemo(() => data ? data.inventories : [], [data])
 
   return <Inventory inventories={inventories} />
 }

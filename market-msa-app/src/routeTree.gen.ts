@@ -14,6 +14,7 @@ import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as OrderDetailRouteImport } from './routes/order-detail'
+import { Route as OrderCreateRouteImport } from './routes/order-create'
 import { Route as InventoriesRouteImport } from './routes/inventories'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -42,6 +43,11 @@ const OrderDetailRoute = OrderDetailRouteImport.update({
   path: '/order-detail',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderCreateRoute = OrderCreateRouteImport.update({
+  id: '/order-create',
+  path: '/order-create',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InventoriesRoute = InventoriesRouteImport.update({
   id: '/inventories',
   path: '/inventories',
@@ -56,6 +62,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/inventories': typeof InventoriesRoute
+  '/order-create': typeof OrderCreateRoute
   '/order-detail': typeof OrderDetailRoute
   '/orders': typeof OrdersRoute
   '/products': typeof ProductsRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/inventories': typeof InventoriesRoute
+  '/order-create': typeof OrderCreateRoute
   '/order-detail': typeof OrderDetailRoute
   '/orders': typeof OrdersRoute
   '/products': typeof ProductsRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/inventories': typeof InventoriesRoute
+  '/order-create': typeof OrderCreateRoute
   '/order-detail': typeof OrderDetailRoute
   '/orders': typeof OrdersRoute
   '/products': typeof ProductsRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/inventories'
+    | '/order-create'
     | '/order-detail'
     | '/orders'
     | '/products'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/inventories'
+    | '/order-create'
     | '/order-detail'
     | '/orders'
     | '/products'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/inventories'
+    | '/order-create'
     | '/order-detail'
     | '/orders'
     | '/products'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   InventoriesRoute: typeof InventoriesRoute
+  OrderCreateRoute: typeof OrderCreateRoute
   OrderDetailRoute: typeof OrderDetailRoute
   OrdersRoute: typeof OrdersRoute
   ProductsRoute: typeof ProductsRoute
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderDetailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/order-create': {
+      id: '/order-create'
+      path: '/order-create'
+      fullPath: '/order-create'
+      preLoaderRoute: typeof OrderCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/inventories': {
       id: '/inventories'
       path: '/inventories'
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   InventoriesRoute: InventoriesRoute,
+  OrderCreateRoute: OrderCreateRoute,
   OrderDetailRoute: OrderDetailRoute,
   OrdersRoute: OrdersRoute,
   ProductsRoute: ProductsRoute,

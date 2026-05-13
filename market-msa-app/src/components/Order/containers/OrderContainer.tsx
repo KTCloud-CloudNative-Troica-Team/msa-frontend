@@ -5,7 +5,7 @@ import { useMemo } from "react"
 const OrderContainer = () => {
   const { data } = OrderService.fetchAllOrders()
 
-  const orders = useMemo(() => data ? data.orders : [], [])
+  const orders = useMemo(() => data ? data.orders : [], [data])
 
   return <Order orders={orders} />
 }
