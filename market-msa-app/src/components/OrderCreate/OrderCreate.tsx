@@ -8,45 +8,52 @@ import {
   IconButton,
   Stack,
   Paper,
-  Container
+  Container,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Remove as RemoveIcon,
   DeleteForeverOutlined as DeleteIcon,
   AddShoppingCart as AddCartIcon,
-  ShoppingBasket as BasketIcon
+  ShoppingBasket as BasketIcon,
 } from '@mui/icons-material';
+import type { Inventory } from '@typedef/InventoryType';
+import type { Product } from '@typedef/ProductType';
+import type { SelectedOrderItem } from '@typedef/SelectedOrderItem';
 
-import type { Inventory } from "@typedef/InventoryType";
-import type { Product } from "@typedef/ProductType";
-
-type Props = {
-  productInventoriesInfo: [Product, Inventory[]][];
-  selectedOrderItem: [Product, Inventory, number][];
+interface Props {
+  productInventoriesInfo: Array<[Product, Inventory[]]>;
+  selectedItems: SelectedOrderItem[];
+  isSubmitting: boolean;
   onCreateButtonClicked: () => void;
   addProductInventoryItem: (p: Product, i: Inventory) => void;
   removeProductInventoryItem: (p: Product, i: Inventory) => void;
-  updateProductInventoryItemQuantity: (p: Product, i: Inventory, q: number) => void;
-};
+  updateProductInventoryItemQuantity: (p: Product, i: Inventory, delta: number) => void;
+}
 
 const OrderCreate = ({
   productInventoriesInfo,
-  selectedOrderItem,
+  selectedItems,
+  isSubmitting,
   onCreateButtonClicked,
   addProductInventoryItem,
   removeProductInventoryItem,
   updateProductInventoryItemQuantity,
 }: Props) => {
-
-  const getSelectedItem = (inventoryId: number) => {
-    return selectedOrderItem.find(([_, inv]) => inv.id === inventoryId);
-  };
+  const findSelected = (inventoryId: number) =>
+    selectedItems.find((item) => item.inventory.id === inventoryId);
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Typography variant="h4" fontWeight="bold" color="text.primary">
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 4,
+        }}
+      >
+        <Typography variant="h4" color="text.primary" sx={{ fontWeight: 'bold' }}>
           주문 생성
         </Typography>
         <Button
@@ -54,10 +61,10 @@ const OrderCreate = ({
           size="large"
           startIcon={<BasketIcon />}
           onClick={onCreateButtonClicked}
-          disabled={selectedOrderItem.length === 0}
+          disabled={selectedItems.length === 0 || isSubmitting}
           sx={{ borderRadius: 2, px: 4, fontWeight: 'bold' }}
         >
-          주문 완료 ({selectedOrderItem.length})
+          {isSubmitting ? '처리 중…' : `주문 완료 (${selectedItems.length})`}
         </Button>
       </Box>
 
@@ -65,16 +72,23 @@ const OrderCreate = ({
         {productInventoriesInfo.map(([product, inventories]) => (
           <Card key={product.id} variant="outlined" sx={{ borderRadius: 3, boxShadow: 1 }}>
             <CardContent>
-              <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  mb: 2,
+                }}
+              >
                 <Box>
-                  <Typography variant="h6" fontWeight="bold">
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                     {product.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     {product.description}
                   </Typography>
                 </Box>
-                <Typography variant="h6" color="primary.main" fontWeight="bold">
+                <Typography variant="h6" color="primary.main" sx={{ fontWeight: 'bold' }}>
                   {product.price.toLocaleString()}원
                 </Typography>
               </Box>
@@ -83,9 +97,9 @@ const OrderCreate = ({
 
               <Stack spacing={2}>
                 {inventories.map((inventory) => {
-                  const selected = getSelectedItem(inventory.id);
-                  const isAdded = !!selected;
-                  const currentQuantity = selected ? selected[2] : 0;
+                  const selected = findSelected(inventory.id);
+                  const isAdded = Boolean(selected);
+                  const currentQuantity = selected?.quantity ?? 0;
 
                   return (
                     <Paper
@@ -110,26 +124,44 @@ const OrderCreate = ({
                         </Typography>
                       </Box>
 
-                      <Box display="flex" alignItems="center" gap={2}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         {isAdded && (
                           <Box
-                            display="flex"
-                            alignItems="center"
-                            sx={{ border: 1, borderColor: 'divider', borderRadius: 1, bgcolor: 'white' }}
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              border: 1,
+                              borderColor: 'divider',
+                              borderRadius: 1,
+                              bgcolor: 'background.paper',
+                            }}
                           >
                             <IconButton
                               size="small"
-                              onClick={() => updateProductInventoryItemQuantity(product, inventory, -1)}
+                              aria-label="수량 감소"
+                              onClick={() =>
+                                updateProductInventoryItemQuantity(product, inventory, -1)
+                              }
                             >
                               <RemoveIcon fontSize="small" />
                             </IconButton>
-                            <Typography sx={{ mx: 2, minWidth: 20, textAlign: 'center', fontWeight: 'bold' }}>
+                            <Typography
+                              sx={{
+                                mx: 2,
+                                minWidth: 20,
+                                textAlign: 'center',
+                                fontWeight: 'bold',
+                              }}
+                            >
                               {currentQuantity}
                             </Typography>
                             <IconButton
                               size="small"
+                              aria-label="수량 증가"
                               disabled={currentQuantity >= inventory.quantity}
-                              onClick={() => updateProductInventoryItemQuantity(product, inventory, 1)}
+                              onClick={() =>
+                                updateProductInventoryItemQuantity(product, inventory, 1)
+                              }
                             >
                               <AddIcon fontSize="small" />
                             </IconButton>
@@ -152,6 +184,7 @@ const OrderCreate = ({
                             color="success"
                             size="small"
                             startIcon={<AddCartIcon />}
+                            disabled={inventory.quantity <= 0}
                             onClick={() => addProductInventoryItem(product, inventory)}
                           >
                             추가
