@@ -1,1 +1,3 @@
 .claude
+market-msa-app/.venv
+market-msa-app/.pytest_cache
